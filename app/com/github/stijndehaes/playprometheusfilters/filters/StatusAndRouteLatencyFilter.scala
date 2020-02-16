@@ -14,7 +14,7 @@ class StatusAndRouteLatencyFilter @Inject()(registry: CollectorRegistry) (implic
   private[filters] val requestLatency = Histogram.build
     .name("requests_latency_seconds")
     .help("Request latency in seconds.")
-    .labelNames("RouteActionMethod", "Status")
+    .labelNames("RouteActionController","RouteActionMethod", "Status")
     .register(registry)
 
   def apply(nextFilter: RequestHeader => Future[Result])
@@ -25,9 +25,10 @@ class StatusAndRouteLatencyFilter @Inject()(registry: CollectorRegistry) (implic
     nextFilter(requestHeader).map { result =>
       val endTime = System.nanoTime
       val requestTime = (endTime - startTime) / Collector.NANOSECONDS_PER_SECOND
-      val routeLabel = requestHeader.tags.getOrElse(Tags.RouteActionMethod, RouteLatencyFilter.unmatchedRoute)
+      val controllerRouteLabel = requestHeader.tags.getOrElse(Tags.RouteController, RouteLatencyFilter.unmatchedRoute)
+      val methodRouteLabel = requestHeader.tags.getOrElse(Tags.RouteActionMethod, RouteLatencyFilter.unmatchedRoute)
       val statusLabel = result.header.status.toString
-      requestLatency.labels(routeLabel, statusLabel).observe(requestTime)
+      requestLatency.labels(controllerRouteLabel, methodRouteLabel, statusLabel).observe(requestTime)
       result
     }
   }

@@ -1,24 +1,24 @@
 name := "play-prometheus-filters"
-organization := "com.github.stijndehaes"
+organization := "com.github.grofers"
 
-version := "0.2.2"
+version := "0.2.3"
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala)
   .settings(
     publishTo := {
-      val nexus = "https://oss.sonatype.org/"
+      val nexus = "http://artifactory.retail.grofer.io:8081/"
       if (version.value.trim.endsWith("SNAPSHOT"))
-        Some("snapshots" at nexus + "content/repositories/snapshots")
+        Some("snapshots" at nexus + "artifactory/libs-snapshot-local")
       else
-        Some("releases" at nexus + "service/local/staging/deploy/maven2")
+        Some("releases" at nexus + "artifactory/libs-release-local")
     },
     publishMavenStyle := true,
     publishArtifact in Test := false,
     pomIncludeRepository := { _ => false },
     makePomConfiguration ~= { _.copy(configurations = Some(Seq(Compile, Runtime, Optional))) },
     pomExtra :=
-      <url>https://github.com/stijndehaes/play-prometheus-filters</url>
+      <url>https://github.com/grofers/play-prometheus-filters</url>
       <licenses>
         <license>
           <name>MIT License</name>
@@ -27,8 +27,8 @@ lazy val root = (project in file("."))
         </license>
       </licenses>
       <scm>
-        <url>git@github.com:stijndehaes/play-prometheus-filters.git</url>
-        <connection>scm:git:git@github.com:stijndehaes/play-prometheus-filters.git</connection>
+        <url>git@github.com:grofers/play-prometheus-filters.git</url>
+        <connection>scm:git:git@github.com:grofers/play-prometheus-filters.git</connection>
       </scm>
       <developers>
         <developer>
